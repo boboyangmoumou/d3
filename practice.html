@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		.MyRect{
+			fill: steelblue;
+		}
+	</style>
+	<!-- <script src="d3/d3.js" charset="UTF-8"></script> -->
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<style></style>
+</head>
+<body>
+	<script> 
+	// 有数据，而没有足够图形元素的时候，使用此方法可以添加足够的元素。
+	// svg.selectAll("rect")//选择svg内所有的矩形
+	// 	.data(dataset)  //绑定数组
+	// 	.enter()	   //指定选择集的enter部分
+	// 	.append('rect')//添加足够数量的矩形元素
+	// //选择集
+	//在有数据没有元素的时候
+	//先svg.selectAll("")
+		//.data
+		//.enter（关键，在没有元素的时候）、
+		//.append("")//所要变成的图形
+		// let body = d3.select("body");
+		// let dataset = [30,40,50,60,100];
+
+		// let width = 200;
+		// let height = 200;
+		// let svg = body.append('svg')
+		// 			.attr("width",width)
+		// 			.attr("height",height);
+		// let rects = svg.selectAll(".MyRect")
+		// 				.data(dataset)
+		// 				.enter()
+		// 				.append("rect")
+		// 				.attr("x",function(d,i){
+		// 					console.log(d);
+		// 					return 20+35 * i;
+		// 				})
+		// 				.attr("y",function(d){
+		// 					return height -80 - d;
+		// 				})
+		// 				.attr("width",30)
+		// 				.attr("height",function(d){
+		// 					return d;
+		// 				});
+
+		// let dataset=[1,2,3,4,5,6];
+		// let body = d3.select("body");
+		// let p = body.selectAll("p");
+		// p.data(dataset)
+		// 	.enter()
+		// 	.append()
+		// 	.text(function(d,i){
+		// 		return d;
+		// 	});
+
+		//画布大小
+		let width = 400;
+		let height = 400;
+		//在 body 里添加一个 SVG 画布  
+		let svg = d3.select("body")
+					.append("svg")
+					.attr("width",width)
+					.attr("height",height);
+		//画布周边的空白		
+		var padding = {left:30,right:30,top:20,bottom:20};
+		//定义一个数组
+		var dataset = [10,20,30,40,33,24,12,5];
+		//x轴的比例
+		var xScale = d3.scale.ordinal()
+						.domain(d3.range(dataset.length))
+						.rangeRoundBands([0, width - padding.left - padding.right]);
+		//y轴的比例尺
+		var yScale = d3.scale.linear()
+					.domain([0,d3.max(dataset)])
+					.range([height - padding.top - padding.bottom, 0]);
+
+		//定义x轴刻度的方向向下
+		var xAxis = d3.svg.axis()
+			.scale(xScale)
+			.orient("bottom");
+		//定义y轴,y轴的向左
+		var yAxis = d3.svg.axis()
+						.scale(yScale)
+						.orient("left");
+
+		//添加x轴
+		var gxAxis = svg.append("g")
+						.attr("class","axis")
+						.attr("transform","translate(" +padding.left + "," + (height-padding.bottom) + ")")
+						.call(xAxis);
+
+		//添加y轴
+		var gyAxis = svg.append("g")
+						.attr("class","axis")
+						.attr("transform","translate(" + padding.left + "," + padding.top + ")")
+						.call(yAxis);						
+		//矩阵之间的空白
+		var rectPadding = 4;
+
+		//添加举行元素
+		var rects = svg.selectAll(".MyRect")
+				.data(dataset)
+				.enter()
+				.append("rect")
+				.attr("class","MyRect")
+				.attr("transform","translate("+ padding.left + "," + padding.top +")")
+				.attr("x",function(d,i){
+					return xScale(i) + rectPadding/2;
+				})
+				.attr("y",function(d){
+					return yScale(d);
+				})
+				.attr("width",xScale.rangeBand() - rectPadding)
+				.attr("height",function(d){
+					return height - padding.top - padding.bottom - yScale(d);
+				});
+
+		//添加文字元素
+		var texts = svg.selectAll(".Mytext")
+						.data(dataset)
+						.enter()
+						.append('text')
+						.attr('class','MyText')
+						.attr("transform","translate(" + padding.left + ","+ padding.top + ")")
+						.attr("x", function(d,i){
+							return xScale(i) + rectPadding/2;
+						})
+						.attr("y",function(d){
+							return yScale(d);
+						})
+						.attr("dx",function(){
+							return (xScale.rangeBand() - rectPadding)/2;
+						})
+						.attr("dy",function(d){
+							return 20;
+						})
+						.text(function(d){
+							return d;
+						})
+
+
+
+	</script>
+</body>
+</html>
